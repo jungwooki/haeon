@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>해온한의원 유소년 스포츠 클리닉 | 객관적 근거 중심 스포츠 의학</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            lemon: '#FFCC00', // 해온 공식 브랜드 옐로우
+                            lemonHover: '#E6B800',
+                            dark: '#0F172A',  // Slate 900 - 더 깊고 모던한 블랙
+                            soft: '#475569',  // Slate 600 - 부드러운 텍스트
+                            muted: '#94A3B8', // Slate 400 - 보조 텍스트
+                            light: '#F8FAFC', // Slate 50 - 아주 밝은 배경
+                            bg: '#FFFFFF',    // 순백색 메인 배경
+                            border: '#F1F5F9' // Slate 100 - 은은한 보더
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Pretendard', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 40px -15px rgba(15, 23, 42, 0.05)',
+                        'floating': '0 30px 60px -20px rgba(15, 23, 42, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Pretendard Font -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+
+    <style>
+        html { scroll-behavior: smooth; }
+        section[id] { scroll-margin-top: 80px; }
+
+        body {
+            background-color: var(--theme-bg);
+            color: #475569;
+            line-height: 1.6;
+            letter-spacing: -0.015em;
+            -webkit-font-smoothing: antialiased;
+            word-break: keep-all;
+        }
+
+        /* Modern App Style UI Components */
+        .card-modern {
+            background: #FFFFFF;
+            border-radius: 24px;
+            border: 1px solid #F1F5F9;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-modern:hover {
+            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+            transform: translateY(-4px);
+            border-color: #E2E8F0;
+        }
+
+        /* 형광펜 하이라이트 (브랜드 옐로우) */
+        .text-highlight {
+            position: relative;
+            display: inline-block;
+            z-index: 1;
+            font-weight: 800;
+        }
+        .text-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: -2px;
+            right: -2px;
+            height: 12px;
+            background-color: rgba(255, 204, 0, 0.4);
+            z-index: -1;
+            border-radius: 4px;
+        }
+
+        /* Pill Tabs - Modern Segmented Control */
+        .tab-pill {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            color: #94A3B8;
+            background-color: transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .tab-pill:hover:not(.active) {
+            background-color: #F8FAFC;
+            color: #0F172A;
+        }
+        .tab-pill.active {
+            background-color: #0F172A;
+            color: #FFFFFF;
+            box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
+        }
+
+        /* Custom Scrollbar */
+        .custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+        /* Animations */
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .reveal-up.active { opacity: 1; transform: translateY(0); }
+        .reveal-delay-100 { transition-delay: 0.1s; }
+        .reveal-delay-200 { transition-delay: 0.2s; }
+        .reveal-delay-300 { transition-delay: 0.3s; }
+    </style>
+</head>
+<body class="selection:bg-brand-lemon selection:text-brand-dark">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-xl border-b border-transparent transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <!-- 매뉴얼 공식 로고 톤앤매너 -->
+                    <div class="w-9 h-9 bg-black rounded-full flex items-center justify-center text-brand-lemon font-extrabold text-[15px] pb-0.5 shadow-sm">해</div>
+                    <div class="flex flex-col">
+                        <span class="font-extrabold text-[18px] tracking-tight text-brand-dark leading-none">해온한의원</span>
+                        <span class="font-bold text-[10px] text-brand-muted tracking-wider mt-0.5">유소년 스포츠 클리닉</span>
+                    </div>
+                </div>
+                <div class="hidden lg:block">
+                    <div class="ml-10 flex items-center space-x-8">
+                        <a href="#philosophy" class="text-[15px] text-brand-soft hover:text-brand-dark font-semibold transition">진료철학</a>
+                        <a href="#expertise" class="text-[15px] text-brand-soft hover:text-brand-dark font-semibold transition">전문성</a>
+                        <a href="#programs" class="text-[15px] text-brand-soft hover:text-brand-dark font-semibold transition">특화프로그램</a>
+                        <a href="#process" class="text-[15px] text-brand-soft hover:text-brand-dark font-semibold transition">진료안내</a>
+                        <!-- CTA Button -->
+                        <a href="#contact" class="px-5 py-2.5 bg-brand-lemon hover:bg-brand-lemonHover text-brand-dark text-[14px] font-bold rounded-full transition shadow-md shadow-brand-lemon/30 transform hover:-translate-y-0.5">검사·상담 예약</a>
+                    </div>
+                </div>
+                <!-- Mobile Menu Button -->
+                <div class="-mr-2 flex lg:hidden">
+                    <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="p-2 rounded-lg text-brand-dark">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="hidden lg:hidden bg-white/95 backdrop-blur-xl border-t border-brand-border shadow-xl absolute w-full" id="mobile-menu">
+            <div class="px-5 pt-4 pb-6 space-y-2">
+                <a href="#philosophy" class="mobile-link block px-4 py-3 rounded-xl text-[15px] font-bold text-brand-soft hover:bg-brand-light hover:text-brand-dark">진료철학</a>
+                <a href="#expertise" class="mobile-link block px-4 py-3 rounded-xl text-[15px] font-bold text-brand-soft hover:bg-brand-light hover:text-brand-dark">전문성</a>
+                <a href="#programs" class="mobile-link block px-4 py-3 rounded-xl text-[15px] font-bold text-brand-soft hover:bg-brand-light hover:text-brand-dark">특화프로그램</a>
+                <a href="#process" class="mobile-link block px-4 py-3 rounded-xl text-[15px] font-bold text-brand-soft hover:bg-brand-light hover:text-brand-dark">진료안내</a>
+                <a href="#contact" class="mobile-link block px-4 py-3 mt-4 rounded-xl text-[15px] font-bold text-center text-brand-dark bg-brand-lemon shadow-md">검사·상담 예약</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section (Vercel App Vibe: Clean, Large Typography, Floating Elements) -->
+    <header class="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-brand-light">
+        <!-- Abstract gradient blobs for modern app feel -->
+        <div class="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[600px] h-[600px] bg-brand-lemon/10 rounded-full blur-3xl opacity-70 pointer-events-none"></div>
+        <div class="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-[500px] h-[500px] bg-blue-100/50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="text-left">
+                    <div class="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full bg-white border border-brand-border text-brand-dark text-[13px] font-bold tracking-wide fade-in-up shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-brand-lemon animate-pulse"></span>
+                        해온한의원 신도림본원
+                    </div>
+                    
+                    <h1 class="text-4xl md:text-5xl lg:text-[56px] font-extrabold text-brand-dark tracking-tight mb-6 leading-[1.2] fade-in-up delay-100">
+                        직감이 아닌 <span class="text-highlight">근거</span>로,<br>
+                        유망주의 성장을 돕습니다.
+                    </h1>
+                    
+                    <p class="mt-6 max-w-lg text-[16px] md:text-[18px] text-brand-soft font-medium leading-[1.6] fade-in-up delay-200">
+                        임상 노하우와 데이터 진단(MPS)을 결합하여<br class="hidden md:block">
+                        유소년 선수의 컨디션과 성장 단서를 명확히 설명해 드립니다.
+                    </p>
+                    
+                    <div class="mt-6 inline-flex items-start gap-2 px-4 py-3 bg-white/60 backdrop-blur-sm rounded-xl border border-white fade-in-up delay-200 max-w-md shadow-sm">
+                        <i class="fa-solid fa-circle-info text-brand-muted text-sm mt-0.5"></i>
+                        <span class="text-[13px] text-brand-soft font-medium leading-tight">모든 분석은 참고자료이며, 최종 진단은 의료진의 진료에 따릅니다.</span>
+                    </div>
+                    
+                    <div class="mt-10 flex flex-col sm:flex-row gap-4 fade-in-up delay-300">
+                        <a href="#contact" class="px-8 py-4 bg-brand-dark hover:bg-black text-white font-bold text-[16px] rounded-full transition shadow-floating flex items-center justify-center gap-2 transform hover:-translate-y-1">
+                            검사·상담 예약하기 <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </a>
+                        <a href="#programs" class="px-8 py-4 bg-white hover:bg-brand-light text-brand-dark font-bold text-[16px] rounded-full border border-brand-border transition flex items-center justify-center gap-2 shadow-sm">
+                            프로그램 안내
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Floating Image Component -->
+                <div class="relative fade-in-up delay-200 hidden lg:block px-4">
+                    <div class="relative rounded-[2rem] p-2 bg-white/50 backdrop-blur-xl border border-white shadow-soft transform rotate-1 hover:rotate-0 transition-transform duration-500">
+                        <img src="https://postfiles.pstatic.net/MjAyNjAyMjhfMjI2/MDAxNzcyMjQ4Mzg2MTI2.s5OAppY0nPtpuTDk4jwzbFCqxo3nHtrtOD6AIlVvZAEg.Mx19LfUx7Yal-M1ukuGxYRIH4vZYW0aPQerW7I6eN2Ug.JPEG/KakaoTalk_20251128_172509132_05.jpg?type=w3840" 
+                             alt="해온한의원 진료실" 
+                             class="relative z-10 rounded-[1.5rem] object-cover h-[480px] w-full">
+                        
+                        <!-- Floating Badge -->
+                        <div class="absolute -bottom-6 -left-8 bg-white px-6 py-5 rounded-2xl border border-brand-border z-20 flex items-center gap-4 shadow-floating animate-bounce" style="animation-duration: 3s;">
+                            <div class="w-12 h-12 bg-brand-light rounded-xl flex items-center justify-center text-brand-dark text-xl">
+                                <i class="fa-solid fa-stethoscope"></i>
+                            </div>
+                            <div>
+                                <p class="text-[12px] text-brand-muted font-bold mb-0.5">Since 2008</p>
+                                <p class="text-[15px] font-extrabold text-brand-dark leading-none">팀닥터의 현장경험</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Philosophy -->
+    <section id="philosophy" class="py-24 bg-white border-b border-brand-border">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 text-center">
+            <div class="reveal-up">
+                <div class="w-16 h-16 bg-brand-lemon/20 rounded-2xl flex items-center justify-center mx-auto mb-8 transform -rotate-6">
+                    <i class="fa-solid fa-quote-left text-2xl text-brand-lemon"></i>
+                </div>
+                <h2 class="text-2xl md:text-[34px] font-extrabold text-brand-dark mb-6 tracking-tight leading-snug">
+                    축구선수 학부모의 마음으로,<br>
+                    진정성 있는 진료를 제공합니다.
+                </h2>
+                <p class="text-[16px] md:text-[18px] text-brand-soft font-medium max-w-2xl mx-auto leading-relaxed">
+                    내 아이가 다쳤을 때의 막막함, 성장에 대한 고민을 누구보다 깊이 이해합니다. <br class="hidden md:block">
+                    해온한의원은 부상 위험요인을 줄이고, <strong class="text-brand-dark">유소년 선수의 잠재력이 흔들리지 않도록 돕는</strong> 
+                    객관적인 관리 설계를 지향합니다.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Expertise -->
+    <section id="expertise" class="py-24 bg-brand-light relative">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 reveal-up">
+                <div>
+                    <span class="text-brand-dark font-bold bg-white border border-brand-border px-4 py-1.5 rounded-full text-[13px] tracking-wide shadow-sm">Core Expertise</span>
+                    <h2 class="text-3xl md:text-[40px] font-extrabold text-brand-dark mt-5 tracking-tight">근거로 설명하는 전문성</h2>
+                </div>
+                <p class="text-[16px] text-brand-soft font-medium max-w-md md:text-right pb-2">
+                    한의학과 스포츠 의학의 접점에서 유소년 특화 진료 환경을 구축했습니다.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="card-modern p-8 group reveal-up reveal-delay-100">
+                    <div class="w-14 h-14 bg-brand-light rounded-2xl flex items-center justify-center text-brand-dark mb-6 group-hover:bg-brand-lemon transition-colors duration-300 shadow-sm border border-brand-border">
+                        <i class="fa-solid fa-globe text-2xl"></i>
+                    </div>
+                    <h3 class="text-[20px] font-bold text-brand-dark mb-4">국제 스포츠의학 연수</h3>
+                    <ul class="space-y-3.5 text-[15px] text-brand-soft font-medium">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-lemon mt-1"></i> FIFA 축구의학 (Diploma) 이수</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-lemon mt-1"></i> 미국 근골격계 초음파 자격 (RMSK)</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-lemon mt-1"></i> 영어 / 일본어 진료 가능</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card-modern p-8 group reveal-up reveal-delay-200">
+                    <div class="w-14 h-14 bg-brand-light rounded-2xl flex items-center justify-center text-brand-dark mb-6 group-hover:bg-brand-lemon transition-colors duration-300 shadow-sm border border-brand-border">
+                        <i class="fa-solid fa-user-doctor text-2xl"></i>
+                    </div>
+                    <h3 class="text-[20px] font-bold text-brand-dark mb-4">소아·청소년 중심 협진</h3>
+                    <ul class="space-y-3.5 text-[15px] text-brand-soft font-medium">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-lemon mt-1"></i> 한방소아과 전문의 진료</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-lemon mt-1"></i> 한의과대학 외래교수 이력</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-lemon mt-1"></i> 분야별 의료진 다각적 진료</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-lemon mt-1"></i> 누적된 성장 상담 데이터</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card-modern p-8 group reveal-up reveal-delay-300">
+                    <div class="w-14 h-14 bg-brand-light rounded-2xl flex items-center justify-center text-brand-dark mb-6 group-hover:bg-brand-lemon transition-colors duration-300 shadow-sm border border-brand-border">
+                        <i class="fa-solid fa-person-running text-2xl"></i>
+                    </div>
+                    <h3 class="text-[20px] font-bold text-brand-dark mb-4">현장 기반 스포츠 케어</h3>
+                    <ul class="space-y-3.5 text-[15px] text-brand-soft font-medium">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-lemon mt-1"></i> 대한스포츠한의학회 팀닥터</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-lemon mt-1"></i> 국내외 대회 의무지원</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-lemon mt-1"></i> 해외 진출 선수 케어 노하우</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-lemon mt-1"></i> 국가대표선수 케어 노하우</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center reveal-up reveal-delay-400 bg-white px-5 py-3 rounded-xl border border-brand-border shadow-sm inline-block max-w-full">
+                <p class="text-[13px] text-brand-muted"><i class="fa-solid fa-circle-exclamation mr-1.5 text-brand-lemon"></i> 기재된 자격 및 이수 내역은 해온한의원 의료진의 이력이며, 특정 기관의 공식 인증이나 치료 효과 보증을 의미하지 않습니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clinic Programs (Dashboard Style) -->
+    <section id="programs" class="py-24 bg-white border-t border-brand-border">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+            <div class="text-center mb-14 reveal-up">
+                <span class="text-brand-dark font-bold bg-brand-light border border-brand-border px-4 py-1.5 rounded-full text-[13px] tracking-wide shadow-sm">Specialized Programs</span>
+                <h2 class="text-3xl md:text-[40px] font-extrabold text-brand-dark mt-5 mb-4 tracking-tight">유소년 특화 진단 프로그램</h2>
+                <p class="text-[17px] text-brand-soft font-medium max-w-2xl mx-auto">MPS 통합 데이터 진단부터 오장변증 체질 평가까지, 해온만의 다각적 진료 시스템입니다.</p>
+            </div>
+
+            <div class="card-modern overflow-hidden bg-white reveal-up reveal-delay-200 shadow-soft">
+                <!-- Tabs -->
+                <div class="flex flex-nowrap overflow-x-auto justify-start md:justify-center gap-2 p-3 border-b border-brand-border bg-brand-light custom-scroll" id="clinicTabs">
+                    <button onclick="renderMainTab('mental')" id="tab-mental" class="tab-pill active">
+                        <i class="fa-solid fa-brain mr-1.5"></i> M (심리·멘탈)
+                    </button>
+                    <button onclick="renderMainTab('physical')" id="tab-physical" class="tab-pill">
+                        <i class="fa-solid fa-stethoscope mr-1.5"></i> P (피지컬·성향)
+                    </button>
+                    <button onclick="renderMainTab('strength')" id="tab-strength" class="tab-pill">
+                        <i class="fa-solid fa-arrow-trend-up mr-1.5"></i> S (성장 패턴)
+                    </button>
+                    <button onclick="renderMainTab('constitution')" id="tab-constitution" class="tab-pill">
+                        <i class="fa-solid fa-leaf mr-1.5"></i> 유소년 체질 평가
+                    </button>
+                </div>
+
+                <!-- Layout -->
+                <div class="p-6 md:p-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch min-h-[520px]">
+                    <!-- Left: Info -->
+                    <div class="lg:col-span-5 flex flex-col justify-center" id="left-panel">
+                        <!-- Injected via JS -->
+                    </div>
+
+                    <!-- Right: Visualization (Glassmorphism / Mac style window) -->
+                    <div class="lg:col-span-7 flex flex-col">
+                        <div class="bg-brand-light rounded-3xl p-6 border border-brand-border h-full flex flex-col justify-center relative min-h-[400px] shadow-inner">
+                            <div class="absolute top-5 right-5 flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-brand-border z-10 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                <span class="text-[12px] font-bold text-brand-dark tracking-wide">데이터 시각화 예시</span>
+                            </div>
+                            <div id="viz-container" class="w-full h-[340px] flex items-center justify-center mt-8 relative z-0">
+                                <!-- Canvas injected here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 p-5 bg-brand-light border border-brand-border rounded-2xl flex items-start gap-3 reveal-up reveal-delay-300">
+                <i class="fa-solid fa-circle-info text-brand-muted mt-1"></i>
+                <div class="text-[14px] text-brand-soft font-medium leading-relaxed">
+                    본 페이지의 지표와 그래프는 이해를 돕기 위한 예시 화면입니다. 실제 검사 및 상담 결과는 개인차가 있으며, 진단 프로그램 자체가 특정 질환의 예방이나 치료 효과를 보장하지 않습니다.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RTP Rehab Clinic Section (요청사항 반영: 오리지널 이모티콘) -->
+    <section class="py-24 bg-brand-light border-b border-brand-border">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+            <div class="text-center mb-14 reveal-up">
+                <span class="text-brand-dark font-bold bg-white border border-brand-border px-4 py-1.5 rounded-full text-[13px] tracking-wide shadow-sm">Return To Play</span>
+                <h2 class="text-3xl md:text-[40px] font-extrabold text-brand-dark mt-5 mb-4 tracking-tight">유소년 선수 RTP 재활 관리</h2>
+                <p class="text-[17px] text-brand-soft font-medium max-w-2xl mx-auto">부상 이후 안전한 훈련 복귀를 목표로 개인별 상태에 맞춘 한의학적 처치를 진행합니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="card-modern p-8 bg-white reveal-up reveal-delay-100 flex flex-col">
+                    <div class="text-4xl mb-5">❄️</div>
+                    <h4 class="text-[18px] font-bold text-brand-dark mb-2.5">크라이오 이온냉각치료</h4>
+                    <p class="text-[15px] text-brand-soft font-medium leading-relaxed">손상 부위의 급성기 붓기와 불편감을 완화하는 데 도움을 줄 수 있도록 관리합니다.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="card-modern p-8 bg-white reveal-up reveal-delay-200 flex flex-col">
+                    <div class="text-4xl mb-5">👐</div>
+                    <h4 class="text-[18px] font-bold text-brand-dark mb-2.5">스포츠 추나요법</h4>
+                    <p class="text-[15px] text-brand-soft font-medium leading-relaxed">움직임 패턴과 신체 정렬을 점검하여 불균형으로 인한 부상 위험요인을 줄이는 방향을 살핍니다.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="card-modern p-8 bg-white reveal-up reveal-delay-300 flex flex-col">
+                    <div class="text-4xl mb-5">🪡</div>
+                    <h4 class="text-[18px] font-bold text-brand-dark mb-2.5">맞춤형 소아침</h4>
+                    <p class="text-[15px] text-brand-soft font-medium leading-relaxed">유소년의 민감도를 고려하여, 과긴장된 근육의 이완과 통증 조절을 돕는 덜 아픈 치료를 적용합니다.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="card-modern p-8 bg-white reveal-up reveal-delay-100 flex flex-col">
+                    <div class="text-4xl mb-5">🔥</div>
+                    <h4 class="text-[18px] font-bold text-brand-dark mb-2.5">온열 전기뜸 요법</h4>
+                    <p class="text-[15px] text-brand-soft font-medium leading-relaxed">안전한 방식의 온열 자극을 통해 국소 부위의 순환을 돕고 전반적인 컨디션 관리를 지원합니다.</p>
+                </div>
+                <!-- Card 5 -->
+                <div class="card-modern p-8 bg-white reveal-up reveal-delay-200 flex flex-col">
+                    <div class="text-4xl mb-5">🩹</div>
+                    <h4 class="text-[18px] font-bold text-brand-dark mb-2.5">밸런스 테이핑</h4>
+                    <p class="text-[15px] text-brand-soft font-medium leading-relaxed">회복 중인 관절과 근육의 안정성을 보조하여, 일상 및 가벼운 훈련 시 부하를 분산시킵니다.</p>
+                </div>
+                <!-- Card 6 -->
+                <div class="card-modern p-8 bg-white reveal-up reveal-delay-300 flex flex-col">
+                    <div class="text-4xl mb-5">💉</div>
+                    <h4 class="text-[18px] font-bold text-brand-dark mb-2.5">약침 요법</h4>
+                    <p class="text-[15px] text-brand-soft font-medium leading-relaxed">개인의 증상과 체질을 고려하여 통증 부위 주변의 염증 완화 및 회복을 목표로 시행합니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Synergy with PlayMetrics (Dark Mode Feature) -->
+    <section class="py-24 bg-brand-dark relative overflow-hidden">
+        <!-- Decoration -->
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-lemon/20 rounded-full blur-[100px] opacity-50 pointer-events-none transform translate-x-1/3 -translate-y-1/3"></div>
+        
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-16 reveal-up">
+                <div class="lg:w-3/5">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="px-3 py-1.5 bg-white/10 text-brand-lemon text-[13px] font-bold rounded-lg backdrop-blur-md border border-white/10">Data Integration</span>
+                    </div>
+                    <h2 class="text-3xl md:text-[40px] font-bold text-white mb-6 tracking-tight leading-snug">
+                        소통을 위한 객관적 참고자료,<br>앱 연동 가이드 제공
+                    </h2>
+                    <p class="text-[16px] text-slate-300 font-medium leading-relaxed mb-8 break-keep">
+                        정밀 검진 및 상담 결과는 <span class="text-brand-lemon font-bold">보호자의 사전 동의 하에 PlayMetrics 등 관련 앱과 연동</span>할 수 있습니다. 수집된 지표는 훈련 일정을 조율할 때 객관적인 보조 지표로 활용됩니다. (최종 판단은 지도자 및 전문가 상담 권장)
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
+                            <i class="fa-solid fa-lock text-brand-lemon"></i>
+                            <span class="text-[14px] font-medium text-white">동의 기반 관리</span>
+                        </div>
+                        <div class="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
+                            <i class="fa-solid fa-share-nodes text-brand-lemon"></i>
+                            <span class="text-[14px] font-medium text-white">공유 범위 설정</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-2/5 flex justify-center lg:justify-end">
+                    <div class="w-64 h-64 bg-slate-800/50 backdrop-blur-xl rounded-[2rem] flex items-center justify-center border border-slate-700 relative shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                        <i class="fa-solid fa-mobile-screen text-7xl text-brand-lemon"></i>
+                        <div class="absolute -bottom-4 -left-4 bg-brand-lemon text-brand-dark text-[13px] font-bold px-5 py-2 rounded-xl shadow-lg border border-brand-lemonHover">Data Sync Live</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROCESS (Steps) -->
+    <section id="process" class="py-24 bg-white border-b border-brand-border overflow-hidden">
+        <div class="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal-up">
+                <span class="text-brand-dark font-bold bg-brand-light border border-brand-border px-4 py-1.5 rounded-full text-[13px] tracking-wide shadow-sm">Process</span>
+                <h2 class="text-3xl md:text-[40px] font-bold text-brand-dark mt-5 mb-4 tracking-tight">진료는 이렇게 진행됩니다</h2>
+                <p class="text-[17px] text-brand-soft font-medium">유소년 선수의 특성을 고려하여, 체계적이고 세심한 단계별 검사와 진료를 약속합니다.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+                <!-- 연결선 (PC) -->
+                <div class="hidden lg:block absolute top-12 left-20 right-20 h-[2px] bg-brand-border -translate-y-1/2 z-0"></div>
+
+                <!-- Step 1 -->
+                <div class="card-modern p-8 bg-white flex flex-col relative z-10 reveal-up reveal-delay-100">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-light text-brand-dark font-black flex items-center justify-center mb-6 text-xl shadow-sm border border-brand-border">1</div>
+                    <h4 class="text-[18px] font-bold text-brand-dark mb-3">예약 및 사전 체크</h4>
+                    <p class="text-[15px] text-brand-soft leading-relaxed font-medium">내원 전 현재 훈련 스케줄, 과거 부상 이력, 주요 불편 부위 등을 파악하여 진료 효율성을 높입니다.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="card-modern p-8 bg-white flex flex-col relative z-10 reveal-up reveal-delay-200">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-light text-brand-dark font-black flex items-center justify-center mb-6 text-xl shadow-sm border border-brand-border">2</div>
+                    <h4 class="text-[18px] font-bold text-brand-dark mb-3">맞춤형 정밀 검사</h4>
+                    <p class="text-[15px] text-brand-soft leading-relaxed font-medium">초음파, 체성분 검사, 자율신경검사 등을 통해 구조적 위험요인과 전반적인 신체 밸런스를 확인합니다.</p>
+                </div>
+
+                <!-- Step 3 (Highlight) -->
+                <div class="card-modern p-8 bg-brand-dark border-brand-dark flex flex-col relative z-10 reveal-up reveal-delay-300 transform md:-translate-y-2">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-lemon text-brand-dark font-black flex items-center justify-center mb-6 text-xl shadow-md border border-brand-lemonHover">3</div>
+                    <h4 class="text-[18px] font-bold text-white mb-3">결과 설명 및 처방</h4>
+                    <p class="text-[15px] text-slate-300 leading-relaxed font-medium">수집된 지표를 종합하여 알기 쉽게 설명하고, 증상과 체질에 맞는 한의학적 치료 계획을 수립합니다.</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="card-modern p-8 bg-white flex flex-col relative z-10 reveal-up reveal-delay-400">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-light text-brand-dark font-black flex items-center justify-center mb-6 text-xl shadow-sm border border-brand-border">4</div>
+                    <h4 class="text-[18px] font-bold text-brand-dark mb-3">지속적 관리 가이드</h4>
+                    <p class="text-[15px] text-brand-soft leading-relaxed font-medium">클리닉 외에서도 관리가 이어질 수 있도록, 가정 내 휴식 및 훈련 복귀 시 주의사항을 안내합니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clinic Environment / Facilities -->
+    <section id="facilities" class="py-24 bg-brand-light border-b border-brand-border">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6 reveal-up">
+                <div>
+                    <span class="text-brand-dark font-bold bg-white border border-brand-border px-4 py-1.5 rounded-full text-[13px] tracking-wide shadow-sm">Premium Facilities</span>
+                    <h2 class="text-3xl md:text-[40px] font-extrabold text-brand-dark mt-5 mb-2 tracking-tight">안전하고 쾌적한 진료 환경</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Facility 1 -->
+                <div class="card-modern overflow-hidden bg-white reveal-up reveal-delay-100 p-2">
+                    <div class="h-64 sm:h-72 overflow-hidden rounded-2xl relative group">
+                        <img src="https://postfiles.pstatic.net/MjAyNjAyMjhfMSAg/MDAxNzcyMjQ4Mzg2MTgw.bWgJrc8vM4kRWnglzMoqIi9XloJKi5rD4HcfVXG5JF4g.AeyAgBmhu3j1jL7HiwWM3H2Z3nM1iSMniIzh9e2kI38g.JPEG/KakaoTalk_20251128_172509132_07.jpg?type=w3840" 
+                             alt="스포츠 집중 진료실" 
+                             class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700">
+                    </div>
+                    <div class="p-8">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="px-3 py-1 bg-brand-light border border-brand-border text-brand-dark text-[12px] font-bold rounded-lg">회복 특화</span>
+                        </div>
+                        <h3 class="text-[22px] font-bold text-brand-dark mb-3">독립형 처치실</h3>
+                        <p class="text-[15px] text-brand-soft font-medium leading-relaxed">
+                            사생활이 보호되는 독립된 베드 공간에서, 선수들이 안정감을 느끼며 치료를 받을 수 있도록 쾌적한 환경을 조성했습니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Facility 2 -->
+                <div class="card-modern overflow-hidden bg-white reveal-up reveal-delay-200 p-2">
+                    <div class="h-64 sm:h-72 overflow-hidden rounded-2xl relative group">
+                        <img src="https://postfiles.pstatic.net/MjAyNjAyMjhfMjI2/MDAxNzcyMjQ4Mzg2MTI2.s5OAppY0nPtpuTDk4jwzbFCqxo3nHtrtOD6AIlVvZAEg.Mx19LfUx7Yal-M1ukuGxYRIH4vZYW0aPQerW7I6eN2Ug.JPEG/KakaoTalk_20251128_172509132_05.jpg?type=w3840" 
+                             alt="첨단 진료실" 
+                             class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700">
+                    </div>
+                    <div class="p-8">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="px-3 py-1 bg-brand-light border border-brand-border text-brand-dark text-[12px] font-bold rounded-lg">근골격계 검사</span>
+                        </div>
+                        <h3 class="text-[22px] font-bold text-brand-dark mb-3">상담 및 초음파 진료실</h3>
+                        <p class="text-[15px] text-brand-soft font-medium leading-relaxed">
+                            근골격계 초음파 기기를 갖추고 있어, 방사선 노출 위험이 없는 방식으로 신체 구조적 상태를 확인하고 설명해 드립니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Appointment & Contact -->
+    <section id="contact" class="py-24 bg-white border-t border-brand-border">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <!-- Info -->
+                <div class="reveal-up">
+                    <h2 class="text-3xl md:text-[40px] font-extrabold text-brand-dark mb-5 tracking-tight">검사 및 상담 예약안내</h2>
+                    <p class="text-[17px] text-brand-soft font-medium mb-10">
+                        충분한 검사와 설명 시간을 확보하기 위해 <strong class="text-brand-dark">사전 예약제</strong>로 운영됩니다.
+                    </p>
+                    
+                    <div class="bg-brand-light p-6 rounded-2xl border border-brand-border mb-10 shadow-sm">
+                        <h4 class="font-bold text-brand-dark text-[15px] mb-3 flex items-center"><i class="fa-solid fa-bell text-brand-lemon text-lg mr-2"></i> 초진 방문 전 안내</h4>
+                        <ul class="text-[14px] text-brand-soft font-medium space-y-2 list-disc list-inside">
+                            <li>초진(검사/상담 포함) 시 약 <strong class="text-brand-dark">60분 정도</strong> 소요됩니다.</li>
+                            <li>최근 키측정 기록, 훈련 스케줄, 주요 통증 부위 정보를 준비해 주세요.</li>
+                            <li><span class="text-red-500 font-bold">미성년자 진료</span>는 보호자 동행/사전 동의가 필요합니다.</li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-5">
+                            <div class="w-12 h-12 bg-white border border-brand-border shadow-sm rounded-xl flex items-center justify-center text-brand-dark shrink-0 text-xl">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-brand-dark text-[16px] mb-1">진료 시간</h4>
+                                <p class="text-brand-soft text-[15px] font-medium leading-relaxed">
+                                    평일: 10:00 - 20:00 (월/수 야간진료 ~21:00)<br>
+                                    토요일: 10:00 - 15:00<br>
+                                    <span class="text-brand-muted">일요일 및 공휴일 휴진</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-5">
+                            <div class="w-12 h-12 bg-white border border-brand-border shadow-sm rounded-xl flex items-center justify-center text-brand-dark shrink-0 text-xl">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-brand-dark text-[16px] mb-1">오시는 길</h4>
+                                <p class="text-brand-soft text-[15px] font-medium leading-relaxed">
+                                    서울 구로구 새말로 97 2층 (신도림역 테크노마트)<br>
+                                    <span class="text-brand-muted text-[13px]"> 3시간 무료주차 (지하3층 ~ 7층)</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-5">
+                            <div class="w-12 h-12 bg-brand-lemon border border-brand-lemonHover shadow-sm rounded-xl flex items-center justify-center text-brand-dark shrink-0 text-xl">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-brand-dark text-[16px] mb-1">예약 문의</h4>
+                                <p class="text-brand-dark text-[22px] font-black mb-1">02-2111-7575</p>
+                                <p class="text-brand-muted text-[13px] font-medium">네이버 예약 및 카카오톡 채널 예약 가능</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action / Map Box (Apple/Vercel Style Card) -->
+                <div class="card-modern overflow-hidden bg-brand-light h-[400px] lg:h-auto relative reveal-up reveal-delay-200 flex flex-col items-center justify-center shadow-inner">
+                    <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-soft mb-6 border border-brand-border">
+                        <i class="fa-solid fa-map-location-dot text-3xl text-brand-dark"></i>
+                    </div>
+                    <p class="font-bold text-[16px] text-brand-dark mb-1">지도 API 연동 영역</p>
+                    <p class="text-[14px] text-brand-muted mb-8">서울 구로구 새말로 97 2층</p>
+                    
+                    <div class="flex gap-3">
+                        <button class="px-6 py-3 bg-[#03C75A] text-white font-bold text-[14px] rounded-xl shadow-md transition hover:-translate-y-0.5"><i class="fa-solid fa-n mr-1.5"></i> 네이버 지도</button>
+                        <button class="px-6 py-3 bg-[#FEE500] text-[#000000] font-bold text-[14px] rounded-xl shadow-md transition hover:-translate-y-0.5"><i class="fa-solid fa-comment mr-1.5"></i> 카카오 맵</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comprehensive Medical Footer -->
+    <footer class="bg-brand-light py-12 border-t border-brand-border">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+            <!-- Footer Links -->
+            <div class="flex flex-wrap items-center gap-5 mb-10 pb-8 border-b border-brand-border text-[14px] font-bold text-brand-soft">
+                <a href="#" class="hover:text-brand-dark transition">의료기관 기본정보</a>
+                <span class="text-brand-border">|</span>
+                <a href="#" class="hover:text-brand-dark transition">비급여 진료비용 안내</a>
+                <span class="text-brand-border">|</span>
+                <a href="#" class="text-brand-dark hover:text-black transition">개인정보처리방침</a>
+                <span class="text-brand-border">|</span>
+                <a href="#" class="hover:text-brand-dark transition">이용약관</a>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start gap-10">
+                <!-- Info -->
+                <div>
+                    <div class="font-extrabold text-[16px] text-brand-dark leading-none mb-4">해온한의원 신도림본원</div>
+                    <div class="text-[14px] text-brand-muted font-medium leading-relaxed space-y-1.5">
+                        <p>의료기관명: 해온한의원 | 대표: 이정욱 (한의사)</p>
+                        <p>사업자등록번호: 113-90-75851 | 대표번호: 02-2111-7575</p>
+                        <p>주소: 서울특별시 구로구 새말로 97 2층 9호 (신도림 테크노마트)</p>
+                        <p class="pt-4 text-brand-border">&copy; 2026 Haeon Korean Medicine Clinic. All rights reserved.</p>
+                    </div>
+                </div>
+
+                <!-- Medical Disclaimer -->
+                <div class="md:w-[50%] p-6 bg-white rounded-2xl border border-brand-border text-[13px] text-brand-muted leading-relaxed shadow-sm">
+                    <p class="font-bold text-brand-dark mb-2">의료광고 고지 및 주의사항</p>
+                    <p>본 웹사이트의 내용은 의료법 제56조 1항을 준수하여 정보 제공을 목적으로 해온한의원에서 직접 작성하였습니다.</p>
+                    <p class="mt-2">안내된 검사 및 진료 프로그램(침, 추나 등)의 결과는 환자의 상태에 따라 개인차가 있을 수 있으며, 드물게 부작용이 발생할 수 있습니다. 진단 및 치료 계획은 내원 후 한의사와 상담하시기 바랍니다.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const chartColors = {
+            dark: '#0F172A',
+            lemon: '#FFCC00', 
+            gray: '#F1F5F9',
+            grayDark: '#94A3B8'
+        };
+
+        const clinicApp = {
+            mental: {
+                title: "M (Mental) 멘탈 심리 평가",
+                sub: "퍼포먼스에 영향을 주는 심리 요소 점검",
+                desc: "구조화된 설문을 통해 멘탈 성향을 시각화합니다. 경기 전후 개인별 루틴 설정 가이드를 상담합니다.",
+                views: [
+                    {
+                        id: "m_radar",
+                        label: "다면 평가",
+                        title: "멘탈 역량 평가 예시",
+                        text: "설문 결과를 바탕으로 강점과 보완점을 확인하는 지표로 활용됩니다.",
+                        renderChart: (ctx) => {
+                            return new Chart(ctx, {
+                                type: 'radar',
+                                data: {
+                                    labels: ['열정/목표', '자기관리', '회복/리셋', '집중/몰입', '자신감/도전', '침착/조절'],
+                                    datasets: [
+                                        { label: '선수 상태', data: [4.5, 4.2, 3.1, 4.0, 3.8, 3.5], borderColor: chartColors.dark, backgroundColor: 'rgba(15, 23, 42, 0.05)', borderWidth: 3, pointRadius: 5, pointBackgroundColor: chartColors.dark },
+                                        { label: '기준 지표', data: [3.8, 3.9, 3.5, 3.6, 3.4, 3.3], borderColor: chartColors.grayDark, backgroundColor: 'transparent', borderDash: [5,5], borderWidth: 1.5 }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true, maintainAspectRatio: false,
+                                    scales: { r: { min: 0, max: 5, stepSize: 1, grid: { color: chartColors.gray }, angleLines: { color: chartColors.gray }, pointLabels: { font: { family: 'Pretendard', size: 12, weight: '700' }, color: '#475569' } } },
+                                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: {family: 'Pretendard', weight: '600'} } } }
+                                }
+                            });
+                        }
+                    }
+                ]
+            },
+            physical: {
+                title: "P (Physical) 부위별 상태 및 경향",
+                sub: "초음파 기반 점검 및 피로 경향 확인",
+                desc: "의료진이 부위별 관절/근육의 상태를 확인합니다. 체수분 분석 등을 참고하여 훈련 부하가 높은지 평가하고 관리를 상담합니다.",
+                views: [
+                    {
+                        id: "p_radar",
+                        label: "위험요인",
+                        title: "부위별 피로도 점검",
+                        text: "진찰 결과를 종합하여 관리가 필요한 취약 부위를 파악합니다.",
+                        renderChart: (ctx) => {
+                            return new Chart(ctx, {
+                                type: 'radar',
+                                data: {
+                                    labels: ['허리', '골반', '대퇴부', '무릎', '하퇴부', '발목'],
+                                    datasets: [{
+                                        label: '주의 필요 지수 (10점 만점)',
+                                        data: [3, 4, 7, 9, 5, 6],
+                                        backgroundColor: 'rgba(15, 23, 42, 0.05)',
+                                        borderColor: chartColors.dark, borderWidth: 3, pointBackgroundColor: chartColors.dark, pointRadius: 5
+                                    }]
+                                },
+                                options: {
+                                    responsive: true, maintainAspectRatio: false,
+                                    scales: { r: { min: 0, max: 10, stepSize: 2, grid: { color: chartColors.gray }, angleLines: { color: chartColors.gray }, pointLabels: { font: { family: 'Pretendard', size: 12, weight: '700' }, color: '#475569' } } },
+                                    plugins: { legend: { display: false } }
+                                }
+                            });
+                        }
+                    },
+                    {
+                        id: "p_ots",
+                        label: "피로 경향",
+                        title: "수분대사(피로) 지표 추이",
+                        text: "ECW Ratio 등 지표 변화를 추적하여 컨디션 저하 신호를 살핍니다.",
+                        renderChart: (ctx) => {
+                            return new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: ['현재 검사치', '권장 참고치'],
+                                    datasets: [{
+                                        label: '세포외수분비 (ECW Ratio)',
+                                        data: [0.391, 0.372],
+                                        backgroundColor: (context) => {
+                                            return context.raw >= 0.390 ? chartColors.dark : chartColors.grayDark; 
+                                        },
+                                        borderRadius: 6, barPercentage: 0.5
+                                    }]
+                                },
+                                options: {
+                                    responsive: true, maintainAspectRatio: false,
+                                    scales: { y: { min: 0.370, max: 0.400, grid: { color: chartColors.gray }, ticks: {color: '#94A3B8'} }, x: { grid: { display: false }, ticks: {color: '#475569', font: {weight: 'bold'}} } },
+                                    plugins: { legend: { display: false } }
+                                }
+                            });
+                        }
+                    }
+                ]
+            },
+            strength: {
+                title: "S (Strength) 성장 지표 상담",
+                sub: "성장 단계(PHV) 참고 및 관리 계획",
+                desc: "성장성숙도 지표를 참고하여 궤적을 확인합니다. 무리한 과부하를 막고 건강한 밸런스를 유지하기 위한 방향을 제시합니다.",
+                views: [
+                    {
+                        id: "s_phv",
+                        label: "PHV 지표",
+                        title: "성장 단계별 궤적 확인",
+                        text: "성숙도를 파악하여 적절한 휴식과 훈련 주기를 설계하는 데 참고합니다.",
+                        renderChart: (ctx) => {
+                            return new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: ['U-10', 'U-11', 'U-12(현재)', 'U-13', 'U-14'],
+                                    datasets: [
+                                        { label: '예상 궤적', data: [0.8, 1.0, 1.5, 2.5, 3.8], borderColor: chartColors.dark, backgroundColor: chartColors.dark, tension: 0.4, borderWidth: 3, pointRadius: [5, 5, 8, 5, 5], pointBackgroundColor: [chartColors.dark, chartColors.dark, chartColors.lemon, chartColors.dark, chartColors.dark], pointBorderColor: chartColors.dark, pointBorderWidth: 2 },
+                                        { label: '일반 표준', data: [1.0, 1.2, 2.5, 3.5, 4.2], borderColor: chartColors.grayDark, backgroundColor: 'transparent', borderDash: [5,5], tension: 0.4, borderWidth: 2, pointRadius: 0 }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true, maintainAspectRatio: false,
+                                    scales: { y: { min: 0, max: 6, grid: { color: chartColors.gray }, title: {display:true, text:'지표'} }, x: { grid: { display: false } } },
+                                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: {family: 'Pretendard', weight: '600'} } } }
+                                }
+                            });
+                        }
+                    }
+                ]
+            },
+            constitution: {
+                title: "유소년 체질 평가",
+                sub: "한의학적 패턴진단 기반 파악",
+                desc: "잦은 소화/수면 불편감을 겪는 선수를 위해, 오장(五臟) 패턴진단을 거쳐 체질을 살피고 맞춤 관리를 제안합니다.",
+                views: [
+                    {
+                        id: "c_radar",
+                        label: "패턴 분석",
+                        title: "장부 패턴 분석 예시",
+                        text: "간(근육), 비(소화), 폐(호흡) 등 관련된 상태를 시각화하여 설명합니다.",
+                        renderChart: (ctx) => {
+                            return new Chart(ctx, {
+                                type: 'radar',
+                                data: {
+                                    labels: ['간(근육)', '심(수면)', '비(소화)', '폐(호흡)', '신(성장)'],
+                                    datasets: [
+                                        { 
+                                            label: '현재 점검', 
+                                            data: [3, 4, 2, 1, 3], 
+                                            borderColor: chartColors.dark, 
+                                            backgroundColor: 'rgba(15, 23, 42, 0.05)', 
+                                            borderWidth: 3, 
+                                            pointRadius: 5,
+                                            pointBackgroundColor: chartColors.dark
+                                        },
+                                        { 
+                                            label: '목표치', 
+                                            data: [4, 4, 4, 4, 4], 
+                                            borderColor: chartColors.grayDark, 
+                                            backgroundColor: 'transparent', 
+                                            borderDash: [5,5], 
+                                            borderWidth: 1.5 
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true, maintainAspectRatio: false,
+                                    scales: { 
+                                        r: { 
+                                            min: 0, max: 5, stepSize: 1, grid: { color: chartColors.gray }, angleLines: { color: chartColors.gray },
+                                            pointLabels: { font: { family: 'Pretendard', size: 12, weight: '700' }, color: '#475569' } 
+                                        } 
+                                    },
+                                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: {family: 'Pretendard', weight: '600'} } } }
+                                }
+                            });
+                        }
+                    }
+                ]
+            }
+        };
+
+        let currentMainTab = 'mental';
+        let currentSubViewIdx = 0;
+        let chartInstance = null;
+
+        function renderMainTab(type) {
+            currentMainTab = type;
+            currentSubViewIdx = 0;
+            
+            ['mental', 'physical', 'strength', 'constitution'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === type) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            renderLeftPanel();
+            renderRightPanel();
+        }
+
+        function switchSubView(idx) {
+            currentSubViewIdx = idx;
+            renderLeftPanel(); 
+            renderRightPanel();
+        }
+
+        function renderLeftPanel() {
+            const data = clinicApp[currentMainTab];
+            const panel = document.getElementById('left-panel');
+            
+            let html = `
+                <div class="fade-in-up">
+                    <p class="text-brand-muted font-bold text-[14px] mb-2 tracking-wide uppercase">${data.sub}</p>
+                    <h3 class="text-3xl md:text-[32px] font-extrabold text-brand-dark mb-4 tracking-tight leading-snug">${data.title}</h3>
+                    <p class="text-[16px] text-brand-soft leading-relaxed mb-8 font-medium">${data.desc}</p>
+                    <div class="space-y-4">
+            `;
+            
+            data.views.forEach((view, idx) => {
+                const isActive = idx === currentSubViewIdx;
+                const activeClasses = isActive 
+                    ? 'border-brand-dark bg-white shadow-md transform scale-[1.02]' 
+                    : 'border-brand-border bg-white hover:border-brand-dark cursor-pointer opacity-80 hover:opacity-100';
+                
+                html += `
+                    <div onclick="switchSubView(${idx})" class="p-5 rounded-2xl border transition-all duration-300 ${activeClasses}">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-lg ${isActive ? 'bg-brand-dark text-brand-lemon' : 'bg-brand-light border border-brand-border text-brand-soft'}">${view.label}</span>
+                            <h5 class="text-brand-dark font-bold text-[16px] tracking-tight">${view.title}</h5>
+                        </div>
+                        <p class="text-brand-soft text-[14px] leading-relaxed font-medium mt-1">${view.text}</p>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            panel.innerHTML = html;
+        }
+
+        function renderRightPanel() {
+            const view = clinicApp[currentMainTab].views[currentSubViewIdx];
+            const container = document.getElementById('viz-container');
+            
+            if (chartInstance) {
+                chartInstance.destroy();
+                chartInstance = null;
+            }
+
+            container.innerHTML = `<div class="w-full h-full relative"><canvas id="clinicChartCanvas"></canvas></div>`;
+            const ctx = document.getElementById('clinicChartCanvas').getContext('2d');
+            
+            Chart.defaults.font.family = "'Pretendard', sans-serif";
+            Chart.defaults.color = '#94A3B8';
+            Chart.defaults.plugins.tooltip.backgroundColor = '#0F172A';
+            Chart.defaults.plugins.tooltip.titleFont = { family: 'Pretendard', size: 13, weight: 'bold' };
+            Chart.defaults.plugins.tooltip.bodyFont = { family: 'Pretendard', size: 13 };
+            Chart.defaults.plugins.tooltip.padding = 12;
+            Chart.defaults.plugins.tooltip.cornerRadius = 8;
+            
+            chartInstance = view.renderChart(ctx);
+        }
+
+        // --- Initialize ---
+        window.addEventListener('load', () => {
+            renderMainTab('mental');
+
+            const revealElements = document.querySelectorAll('.reveal-up');
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, observerOptions);
+            revealElements.forEach(el => revealObserver.observe(el));
+        });
+
+        // Navbar Scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 10) {
+                nav.classList.replace('bg-white/80', 'bg-white/95');
+                nav.classList.add('shadow-sm');
+            } else {
+                nav.classList.replace('bg-white/95', 'bg-white/80');
+                nav.classList.remove('shadow-sm');
+            }
+        });
+    </script>
+</body>
+</html>
