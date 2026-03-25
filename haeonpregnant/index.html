@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>해온한의원 난임 임신준비 클리닉</title>
+    <!-- 프리텐다드 웹폰트 로드 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8fafc; /* 살짝 더 밝고 따뜻한 배경 */
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* 화면 전환 애니메이션 */
+        .fade-in {
+            animation: fadeIn 0.35s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* 모달 애니메이션 및 스타일 */
+        #modal-backdrop {
+            transition: opacity 0.3s ease-out;
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(2px); /* 모달 띄울 때 배경 살짝 블러 처리 */
+        }
+        #modal-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        #modal-content {
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform: translateY(100%);
+        }
+        #modal-content.active {
+            transform: translateY(0);
+        }
+
+        /* 스크롤바 숨김 */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 본문 내용 강조 스타일 */
+        .content-body h4 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #14532d;
+            margin-top: 1.5rem;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .content-body h4::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 18px;
+            background-color: #22c55e;
+            border-radius: 4px;
+        }
+        .content-body p {
+            color: #475569;
+            line-height: 1.65;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+        .content-body strong {
+            color: #15803d;
+            font-weight: 700;
+        }
+        .content-body ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 1.2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #f1f5f9;
+        }
+        .content-body li {
+            position: relative;
+            padding-left: 1.2rem;
+            margin-bottom: 0.6rem;
+            color: #4b5563;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        .content-body li:last-child {
+            margin-bottom: 0;
+        }
+        .content-body li::before {
+            content: '✨';
+            position: absolute;
+            left: 0;
+            top: 0.1rem;
+            font-size: 0.8rem;
+        }
+        .pill {
+            display: inline-block;
+            background-color: #dcfce7;
+            color: #15803d;
+            padding: 0.2rem 0.7rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-right: 0.3rem;
+            margin-bottom: 0.4rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .intro-box {
+            background-color: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+        }
+        .intro-box p {
+            margin-bottom: 0;
+            color: #166534;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="text-gray-900 antialiased pb-20">
+
+    <!-- Header (공통) -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-md mx-auto px-5 py-4 flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-brand-900 tracking-tight flex items-center gap-1">
+                    🌿 해온한의원 임신준비 클리닉
+                </h1>
+                <p class="text-sm text-brand-600 font-medium mt-1">따뜻한 기다림, 난임·임신준비 클리닉</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- [1] 홈 화면 (대주제 5개) -->
+    <main id="view-home" class="max-w-md mx-auto px-4 py-6 fade-in block">
+        <div class="mb-7 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <h2 class="text-xl font-bold mb-2 leading-tight">출산에 대한 여러분의 생각은<br>과연 어떠신가요? 👶💖</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">
+                건강한 우리 아이를 만나는 길, 해온한의원이 든든한 동반자가 되어 드릴게요. 아래 카테고리를 터치해 자세한 진료 과정을 확인해 보세요!
+            </p>
+        </div>
+
+        <div id="category-list" class="flex flex-col gap-4">
+            <!-- JS로 카테고리 렌더링 -->
+        </div>
+    </main>
+
+    <!-- [2] 서브 페이지 (해당 대주제의 챕터 리스트) -->
+    <main id="view-category" class="max-w-md mx-auto px-4 py-6 fade-in hidden">
+        <!-- 뒤로 가기 및 카테고리 헤더 -->
+        <button onclick="closeCategory()" class="flex items-center text-gray-500 mb-5 hover:text-brand-600 transition-colors bg-white px-3 py-1.5 rounded-full shadow-sm border border-gray-100">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span class="font-bold text-sm">목록으로 돌아가기</span>
+        </button>
+
+        <div class="mb-6 px-1">
+            <span class="text-xs font-bold text-brand-500 mb-1 block tracking-wider">CATEGORY</span>
+            <h2 id="sub-category-title" class="text-2xl font-extrabold mb-2 text-gray-900 tracking-tight">카테고리 제목</h2>
+            <p id="sub-category-desc" class="text-gray-500 text-sm leading-relaxed">카테고리 설명</p>
+        </div>
+
+        <div id="chapter-list" class="flex flex-col gap-3">
+            <!-- JS로 선택된 카테고리의 챕터 렌더링 -->
+        </div>
+    </main>
+
+    <!-- [3] Modal (Bottom Sheet - 개별 챕터 내용) -->
+    <div id="modal-backdrop" class="fixed inset-0 z-40 bg-black/40" onclick="closeModal()"></div>
+    
+    <div id="modal-content" class="fixed inset-x-0 bottom-0 z-50 flex justify-center pointer-events-none">
+        <div class="bg-white w-full max-w-md rounded-t-[2rem] shadow-2xl pointer-events-auto flex flex-col h-[88vh]">
+            
+            <!-- Modal Header -->
+            <div class="px-6 pt-4 pb-4 border-b border-gray-100 flex-shrink-0 relative">
+                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-5"></div>
+                <div class="flex justify-between items-start gap-4">
+                    <div class="flex-1 pr-2">
+                        <span id="modal-chapter-num" class="text-brand-500 font-bold text-xs mb-1 block tracking-wider">CHAPTER</span>
+                        <h3 id="modal-title" class="text-xl font-extrabold text-gray-900 leading-tight">제목</h3>
+                    </div>
+                    <button onclick="closeModal()" class="p-2.5 bg-gray-50 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Modal Body -->
+            <div id="modal-body" class="px-6 py-6 overflow-y-auto hide-scrollbar flex-grow content-body bg-gray-50">
+                <!-- JavaScript로 내용이 삽입됩니다. -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. 데이터 정의 (카테고리 및 챕터) ---
+        const categories = [
+            {
+                id: 'cat1',
+                emoji: '🩺',
+                title: '내 몸을 알아가는 첫걸음',
+                desc: '임신을 위한 최적의 몸 상태인지 파악하는 온/오프라인 정밀 진단 검사 과정이에요.',
+                chapterIds: [1, 2]
+            },
+            {
+                id: 'cat2',
+                emoji: '💡',
+                title: '원인을 알면 길이 보여요',
+                desc: '다낭성, 자궁내막증, 고령 등 개개인의 난임 원인에 맞춘 세심하고 따뜻한 맞춤 진료를 진행해요.',
+                chapterIds: [3, 4, 5, 6]
+            },
+            {
+                id: 'cat3',
+                emoji: '🤝',
+                title: '시험관 시술, 든든한 동행',
+                desc: '힘든 시험관 시술 과정, 착상률은 쑥쑥 높이고 부작용은 줄여주는 한의학 병행 프로젝트!',
+                chapterIds: [7, 8]
+            },
+            {
+                id: 'cat4',
+                emoji: '🌿',
+                title: '생명을 품는 맑은 처방',
+                desc: '건강한 난포 성장부터 착상, 그리고 소중한 아기를 지키는 안태(유산 방지) 처방 안내입니다.',
+                chapterIds: [9, 10, 11, 12, 13]
+            },
+            {
+                id: 'cat5',
+                emoji: '💆‍♀️',
+                title: '몸과 마음이 편안해지는 시간',
+                desc: '침, 뜸, 고주파를 통해 차가워진 자궁과 골반의 혈류를 맑고 따뜻하게 순환시켜 드려요.',
+                chapterIds: [14, 15]
+            }
+        ];
+
+        const chapters = [
+            {
+                id: 1, title: "상담 전 기초 검사 📋", subtitle: "혈압부터 체성분까지 내 몸의 베이스 체크",
+                content: `
+                    <div class="intro-box">
+                        <p>해온한의원에 오시면 가장 먼저 하는 검사들이에요! 편안한 마음으로 받아주시면 됩니다. 😊</p>
+                    </div>
+                    <h4>💓 VITAL 검사</h4>
+                    <p>건강의 가장 기본이 되는 지표죠! <strong>혈압, 체온, 맥박</strong>을 측정하여 현재의 기본적인 신체 리듬을 확인해요.</p>
+                    
+                    <h4>🧠 수양명경락기능검사</h4>
+                    <p>눈에 보이지 않는 스트레스와 자율신경계의 밸런스를 간접적으로 평가하는 똑똑한 장비예요.</p>
+                    <ul>
+                        <li>긴장도와 피로도 등 자율신경 상태 파악</li>
+                        <li>혈관의 건강함(혈관 노화도) 측정</li>
+                    </ul>
+
+                    <h4>⚖️ 인바디 (체성분) 검사</h4>
+                    <p>임신을 준비할 때 적절한 체지방률 관리는 무척 중요해요! 내 몸의 구성을 객관적으로 확인합니다.</p>
+                    <ul>
+                        <li>내장지방 및 근육량, 체지방량 파악</li>
+                        <li>난임의 숨은 원인이 될 수 있는 체성분 불균형 확인</li>
+                        <li>한의학적 '습담(노폐물)'이나 '기혈허약(체력저하)'을 판단하는 중요한 근거가 돼요.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 2, title: "진단 및 상담 후 검사 🔍", subtitle: "장부의 허실과 체열, 혈액 검사",
+                content: `
+                    <div class="intro-box">
+                        <p>눈으로 보이지 않는 기혈의 순환과 염증 수치 등을 더 꼼꼼히 들여다보는 시간이에요. 🧐</p>
+                    </div>
+                    <h4>⚡ 자율신경 진단검사기</h4>
+                    <p>인체에 흐르는 경락의 에너지를 평가하여, 기 혈 수 중 어디가 약하고(허) 어디가 과열되었는지(실) 짚어내는 진단기기예요.</p>
+                    
+                    <h4>🌡️ 체수분 검사기(인바디BWA2.0s)</h4>
+                    <p>임신을 위해서 내 몸의 균형이 어떤지 보는 검사장비에요. 이를 바탕으로 세포건강도, 각종 담음(비정상수분)이 어떻게 있는 지 알아내는 검사에요.</p>
+                    <ul>
+                        <li>여성분들이 흔히 겪는 수족냉증이나 하복부 냉증 확인</li>
+                        <li>골반 주변의 혈액순환이 잘 되고 있는지 한눈에 파악</li>
+                    </ul>
+
+                    <h4>🩸 안심 혈액/소변 검사</h4>
+                    <p>한약 복용 전과 체력 상태를 체크하기 위해 꼭 필요한 기본 검사들이에요.</p>
+                    <ul>
+                        <li><strong>CBC 검사:</strong> 면역력, 빈혈 등 기본적인 체력 상태 확인</li>
+                        <li><strong>소변 검사:</strong> 방광의 건강 및 감염성 질환(질염, 방광염 등) 여부 확인</li>
+                        <li><strong>간기능 검사:</strong> 안전한 한약 복용을 위해 간기능 수치를 미리 체크해요!</li>
+                    </ul>
+                `
+            },
+            {
+                id: 3, title: "배란장애 & 다낭성 🌸", subtitle: "불규칙한 생리 리듬 되찾기",
+                content: `
+                    <div class="intro-box">
+                        <p>여성 난임의 가장 흔한 원인이지만, 꾸준히 관리하면 충분히 건강한 배란을 회복할 수 있어요! 💪</p>
+                    </div>
+                    <h4>✨ 배란장애 해온 한의치료의 놀라운 효과</h4>
+                    <p>배란유도제(클로미펜)와 비교했을 때 <strong>배란율과 임신율은 비슷하게 유지</strong>하면서도, <strong>유산율은 무려 10%로 뚝 떨어집니다!</strong> (클로미펜 유산율 54.5%)</p>
+                    <p>단순히 난자를 배출시키는 것을 넘어, 해온 한의 치료는 배란의 질을 높이고 자궁내막을 폭신하고 건강하게 만들어주기 때문이에요.</p>
+
+                    <h4>💧 다낭성난소증후군 (PCOS)</h4>
+                    <p>생리가 띄엄띄엄 오거나 멈추고, 체중이 늘거나 여드름이 생겨 속상하셨죠? 이는 호르몬 불균형과 대사 문제(습담)가 겹친 복합적인 증후군이에요.</p>
+                    <ul>
+                        <li><strong>근본 원인:</strong> 생식 기능의 저하(신허) + 노폐물 축적(습담) + 스트레스(간울)</li>
+                        <li><strong>치료 계획:</strong> 급하게 마음먹기보다 자궁의 리듬을 되찾는 게 중요해요. 특히 비만이 동반된 경우 최소 3~6개월의 장기적인 디톡스 및 호르몬 정상화 치료를 진행합니다.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 4, title: "황체 결함 & 고령 난임 ⏳", subtitle: "착상력 강화 및 난소 나이 되돌리기",
+                content: `
+                    <div class="intro-box">
+                        <p>아무리 예쁜 씨앗이라도 땅이 부실하면 뿌리내리기 어렵죠. 튼튼한 집을 짓고 난소의 활력을 높여볼까요? 🏡</p>
+                    </div>
+                    <h4>🌙 황체기 결함 (자꾸 유산이 반복된다면?)</h4>
+                    <p>배란은 잘 되는데 임신이 유지되지 않나요? 이는 배란 후 생성되는 '프로게스테론' 호르몬이 부족해 자궁내막이 배아를 꽉 잡아주지 못해서예요.</p>
+                    <ul>
+                        <li>반복적인 초기 유산과 난임의 주요 원인이 됩니다.</li>
+                        <li><strong>치료 기간:</strong> 자궁의 뿌리(신장) 기운을 채우는 것을 목표로, 기본 <strong>3번의 생리 주기</strong> 동안 내막을 두껍고 영양가 있게 만드는 치료를 합니다.</li>
+                    </ul>
+
+                    <h4>🕰️ 35세 이상 고령 및 원인불명 난임</h4>
+                    <p>병원에서는 정상이라는데 임신이 늦어지거나, 난소 나이(AMH)가 낮게 나와 상심하신 분들을 위한 과정이에요.</p>
+                    <ul>
+                        <li>에너지를 끌어올리는 <strong>'보신(補腎)'</strong> 위주의 한약 처방이 아주 효과적입니다.</li>
+                        <li>보통 43세 이하의 여성분들에게 집중적으로 적용하며, 원장님의 풍부한 임상 경험을 바탕으로 희망을 찾아드려요!</li>
+                    </ul>
+                `
+            },
+            {
+                id: 5, title: "조기 난소부전 & 면역 요인 🛡️", subtitle: "포기하지 마세요, 내 몸 밸런스 회복",
+                content: `
+                    <div class="intro-box">
+                        <p>청천벽력 같은 진단에 많이 놀라셨을 테지만, 아직 포기하기엔 일러요. 해온이 마음까지 다독이며 함께 할게요. 🫂</p>
+                    </div>
+                    <h4>🥀 조기 난소부전 (POF)</h4>
+                    <p>40세 이전에 여성호르몬이 감소하고 생리가 멈추는 증상이에요. 심한 스트레스나 선천적인 에너지 부족이 원인일 수 있어요.</p>
+                    <ul>
+                        <li><strong>따뜻한 치료 원칙:</strong> 생식 기능(신장)을 보충하고, 꽉 막힌 스트레스(간기)를 부드럽게 풀어주며, 불안한 마음을 다독이는(안신) 처방을 씁니다.</li>
+                        <li>확률이 높진 않더라도, 환자분의 간절한 희망과 여건을 고려하여 최선의 기적을 준비합니다.</li>
+                    </ul>
+
+                    <h4>⚔️ 면역학적 요인</h4>
+                    <p>내 몸의 방어 체계가 너무 예민해져서, 정자나 수정란을 '이물질'로 착각하고 공격해 착상을 방해하는 상태예요.</p>
+                    <ul>
+                        <li>시험관 등 복잡한 시술로 넘어가기 전, 자연 임신을 시도해볼 수 있는 소중한 골든타임!</li>
+                        <li><strong>치료법:</strong> 3개월간 잠시 피임을 유지하며, 면역 반응을 진정시키고 어혈과 습열을 빼내는 맞춤 한약을 복용하여 자궁을 평화로운 상태로 만듭니다.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 6, title: "자궁내막증 & 난관 요인 🕸️", subtitle: "염증을 없애고 맑은 길 열어주기",
+                content: `
+                    <div class="intro-box">
+                        <p>골반통과 생리통을 유발하는 원인 질환들! 병을 다스려야 아기가 찾아오는 길도 맑아집니다. 🛤️</p>
+                    </div>
+                    <h4>🩸 자궁내막증</h4>
+                    <p>자궁 안에 있어야 할 내막 조직이 자궁 밖(난소, 나팔관 등)에 엉겨 붙어 염증과 유착을 일으키는 질환이에요.</p>
+                    <ul>
+                        <li>통증은 물론, 국소적인 면역 이상을 일으켜 수정란이 착상하는 것을 방해하는 큰 방해꾼이에요.</li>
+                        <li><strong>치료 전략:</strong> 근본적인 기운은 돋우고, 나쁜 어혈은 빼내는(거어조경) 치료를 최소 6개월 이상 꾸준히 진행합니다.</li>
+                    </ul>
+
+                    <h4>🛤️ 난관(나팔관) 요인 불임</h4>
+                    <p>정자와 난자가 만나는 유일한 통로인 나팔관이 좁아지거나 막힌 경우예요.</p>
+                    <ul>
+                        <li>양방의 난관 복원 수술을 받으신 후 <strong>한약을 병행하시면 나팔관 기능 회복에 훨씬 큰 시너지 효과</strong>가 나요!</li>
+                        <li>한의학 단독 치료보다는 산부인과적 수술 처치와 협진하는 것을 권장해 드립니다. 자궁외 임신 가능성 등 주의사항도 꼼꼼히 챙겨드릴게요.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 7, title: "시험관 시술 전/중 관리 🤝", subtitle: "착상 찰딱! 성공률 높이는 시크릿",
+                content: `
+                    <div class="intro-box">
+                        <p>힘든 시험관 시술 과정, 몸도 마음도 지치지 않도록 해온이 페이스메이커가 되어 드릴게요! 🏃‍♀️💕</p>
+                    </div>
+                    <h4>🌱 시험관(체외수정) 시술 전 준비</h4>
+                    <p>좋은 씨앗을 얻으려면 밭을 미리 가꿔야 하듯, 난소 예비력이 낮거나 배란 유도제 반응이 안 좋은 35세 전후 여성분들께 적극 추천해요!</p>
+                    <ul>
+                        <li><strong>시술 전 2~3개월:</strong> 집중 한약 투여로 난자의 질을 높이고 최상의 자궁 환경을 세팅합니다.</li>
+                    </ul>
+
+                    <h4>💖 시술 중 동시 치료 (착상기)</h4>
+                    <p>과배란 주사를 맞으면 급격히 에너지가 소모돼요. 이를 채워주고 내막을 튼튼하게 공사합니다!</p>
+                    <ul>
+                        <li>낡은 내막은 깨끗이 탈락시키고, 폭신한 새 내막이 잘 깔리도록 혈액순환을 극대화(양혈활혈) 합니다.</li>
+                        <li>배아 이식 후 임신이 확인되면, 유산 위험이 높은 9주 차 내외까지 <strong>착상 유지(안태) 처방</strong>을 이어갑니다. 우리 아기 찰딱 붙어있으라고요! 👶</li>
+                    </ul>
+                `
+            },
+            {
+                id: 8, title: "과배란 합병증 & 실패 조리 🌈", subtitle: "지친 몸 회복하고 다시 희망 채우기",
+                content: `
+                    <div class="intro-box">
+                        <p>몸이 붓고 힘들거나, 아쉬운 결과를 마주했더라도 자책하지 마세요. 잠시 쉬어가는 시간일 뿐이에요. ☕</p>
+                    </div>
+                    <h4>🚫 과배란 합병증 (난소과자극증후군, OHSS) 예방</h4>
+                    <p>과배란 주사로 인해 복수가 차거나, 배가 빵빵해지고 구토, 설사, 숨 가쁨 등이 올 수 있어요. 정말 고생스러우시죠.</p>
+                    <ul>
+                        <li><strong>해결책:</strong> 육미지황탕, 곽향정기산 등 수분 대사를 돕고 속을 편안하게 해주는 처방으로 부작용을 빠르게 가라앉힙니다.</li>
+                    </ul>
+
+                    <h4>🌻 보조생식술 실패 후 조리</h4>
+                    <p>한 번의 실패에 좌절하기보단, 1~3개월간 몸을 재정비하고 다음 도전을 준비하는 게 훨씬 유리해요.</p>
+                    <ul>
+                        <li><strong>난소가 지쳤을 때:</strong> 난소의 호르몬 민감성을 높이고 미세 혈류 순환을 개선(보신활혈)해요.</li>
+                        <li><strong>내막이 얇을 때:</strong> 자궁내막이 도톰하게 자랄 수 있도록 영양을 듬뿍 공급(보신익기활혈)해 줍니다.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 9, title: "한의학 종합 치료 & 나의 체질 🧩", subtitle: "침+한약 시너지와 6가지 원인 분석",
+                content: `
+                    <div class="intro-box">
+                        <p>사람의 생김새가 다르듯, 난임의 원인도 다 달라요. 내 체질에 꼭 맞는 맞춤 전략을 세워봐요! 🎯</p>
+                    </div>
+                    <h4>🌟 한의학 종합 치료 가이드라인</h4>
+                    <p>난임 극복을 위해서는 <strong>침·뜸 치료와 한약 복용을 병행</strong>하는 종합 치료가 가장 효과적이에요!</p>
+                    <ul>
+                        <li>생리 주기를 기준으로 <strong>'3개월(3주기)'을 하나의 기본 치료 코스</strong>로 잡고 꾸준히 관리합니다.</li>
+                        <li>시험관 시술을 할 때도 한의 침 치료를 병행하면 부작용도 덜고 성공률도 높일 수 있답니다.</li>
+                    </ul>
+
+                    <h4>🔍 나는 어떤 체질일까? (6가지 병기)</h4>
+                    <p>한의학에서는 난임의 근본 원인을 다음 6가지 요소의 복합적인 문제로 파악하고 치료 방향을 정해요.</p>
+                    <div class="mt-3 flex flex-wrap">
+                        <span class="pill">신허 (에너지 부족)</span> 
+                        <span class="pill">간울 (스트레스/울화)</span> 
+                        <span class="pill">혈어 (어혈/순환장애)</span> 
+                        <span class="pill">기혈허약 (만성피로/빈혈)</span> 
+                        <span class="pill">습담 (비만/노폐물)</span> 
+                        <span class="pill">습열 (염증성 체질)</span>
+                    </div>
+                `
+            },
+            {
+                id: 10, title: "난포기 맞춤 한약 ① 🌿", subtitle: "신허, 간울, 혈어형 맞춤 처방",
+                content: `
+                    <div class="intro-box">
+                        <p>난포가 예쁘게 자라나는 '배란전기(난포기)'! 내 체질에 맞는 명약들로 쑥쑥 키워볼까요? 🌱</p>
+                    </div>
+                    <h4>1. ⚡ 신허형 (기본 에너지가 부족한 분)</h4>
+                    <p>난소 기능이 떨어져 생리를 잘 안 하거나 양이 적은 분들께, 생명력의 뿌리를 튼튼하게 해줘요.</p>
+                    <ul>
+                        <li><span class="pill">주요 처방</span> 육린주, 귀신환, 온포종옥탕 등 따뜻하고 영양분 가득한 약재들!</li>
+                    </ul>
+
+                    <h4>2. 🌪️ 간울형 (스트레스가 꽉 막힌 분)</h4>
+                    <p>신경 쓰면 생리가 건너뛰고, 가슴이나 아랫배가 뭉치듯 아픈 분들! 화병과 긴장을 부드럽게 풀어드려요.</p>
+                    <ul>
+                        <li><span class="pill">주요 처방</span> 해온해울탕, 조경종옥탕, 개울종옥탕 등 (향긋하고 기운을 뚫어주는 처방)</li>
+                    </ul>
+
+                    <h4>3. 🩸 혈어형 (자궁에 어혈이 뭉친 분)</h4>
+                    <p>생리통이 심하고 덩어리 피가 많거나 자궁근종, 내막증이 있는 분들의 나쁜 피(어혈)를 씻어냅니다.</p>
+                    <ul>
+                        <li><span class="pill">주요 처방</span> 해온청월탕, 해온생화탕, 소복축어탕 등 자궁 청소 특효약!</li>
+                    </ul>
+                `
+            },
+            {
+                id: 11, title: "난포기 맞춤 한약 ② 💧", subtitle: "습담, 기혈허약형 맞춤 처방",
+                content: `
+                    <div class="intro-box">
+                        <p>무거운 몸은 가볍게 비워내고, 텅 빈 기운은 꽉꽉 채워주는 맞춤 한약 이야기 두 번째! ⚖️</p>
+                    </div>
+                    <h4>4. 🌧️ 습담형 (노폐물이 쌓이고 몸이 무거운 분)</h4>
+                    <p>다낭성난소증후군이나 대사증후군처럼, 체지방과 불필요한 수분(습담)이 뭉쳐 배란을 방해하는 타입이에요.</p>
+                    <ul>
+                        <li>몸속 노폐물을 배출하고 대사를 쌩쌩하게 돌려주는 디톡스 치료가 필요해요!</li>
+                        <li><span class="pill">주요 처방</span> 해온도담탕, 창부도담탕 (+ 혈액순환을 돕는 익모초, 홍화 추가)</li>
+                    </ul>
+
+                    <h4>5. 🌬️ 기혈허약형 (늘 피곤하고 어지러운 분)</h4>
+                    <p>조금만 움직여도 지치고, 안색이 창백하며 빈혈기가 있는 분들. 난포를 키울 영양분 자체가 부족한 상태예요.</p>
+                    <ul>
+                        <li>마치 마른땅에 단비를 뿌리듯, 밥맛을 돌게 하고 질 좋은 피를 만들어 기운을 솟아나게 합니다.</li>
+                        <li><span class="pill">주요 처방</span> 해온양영탕, 부익지황탕, 귀비탕 (녹용 등 보약재 듬뿍!)</li>
+                    </ul>
+                `
+            },
+            {
+                id: 12, title: "착상기(황체기) 맞춤 한약 🔥", subtitle: "습열형 (염증 타파! 깨끗한 자궁 만들기)",
+                content: `
+                    <div class="intro-box">
+                        <p>배란 후 수정란이 살포시 내려앉는 시기. 집(자궁)에 곰팡이나 열기가 있으면 안 되겠죠? 🧹</p>
+                    </div>
+                    <h4>🔥 습열형 (염증성 체질)</h4>
+                    <p>평소 냉(분비물)이 많고 색이 진하거나 냄새가 나며, 질염이나 방광염에 아주 자주 걸리는 분들에게 해당하는 체질이에요.</p>
+                    <p>하복부에 덥고 끈적끈적한 습기(습열)가 차 있어서, 수정란이 뿌리내리기엔 너무 가혹한 환경이랍니다. 열을 내리고 해독하는 과정이 꼭 필요해요!</p>
+                    
+                    <h4>✨ 맞춤 해독 처방</h4>
+                    <ul>
+                        <li><span class="pill">두작양영탕</span> 열을 식히고 혈을 보해줍니다.</li>
+                        <li><span class="pill">해독사물탕 & 해독활혈탕</span> 자궁 주변의 만성적인 염증 수치를 낮추고, 탁한 피를 맑게 정화하여 최적의 착상 환경을 완성합니다!</li>
+                    </ul>
+                `
+            },
+            {
+                id: 13, title: "임신 성공 후 유지(안태) 🤰", subtitle: "유산 방지 및 아기 천사 꽉 지키기",
+                content: `
+                    <div class="intro-box">
+                        <p>두 줄 확인! 너무너무 축하드려요! 🎉 하지만 아직 방심은 금물. 우리 아기 건강하게 지켜내요!</p>
+                    </div>
+                    <h4>🛡️ 안태(安胎)란 무엇일까요?</h4>
+                    <p>한자 그대로 <strong>'태아를 편안하게 한다'</strong>는 뜻이에요. 엄마의 자궁내막을 튼튼하게 유지해 초기 유산의 위험을 막아주는 아주 귀한 처방이죠.</p>
+                    
+                    <h4>💊 투약 가이드라인</h4>
+                    <ul>
+                        <li>일반적으로 임신이 확인되면 드시던 임신준비 한약은 복용을 멈추고 경과를 지켜봅니다.</li>
+                        <li><strong>⚠️ 하지만 꼭 '안태약'을 드셔야 하는 분들이 있어요!</strong>
+                            <br>- 과거에 자연유산이나 계류유산 경험이 있으신 분
+                            <br>- 35세 이상의 고령 임신부
+                            <br>- 평소 체력이 몹시 약하거나 출혈(착상혈 이상)이 비치는 분
+                        </li>
+                    </ul>
+
+                    <h4>🌿 믿음직한 안태 처방들</h4>
+                    <ul>
+                        <li><span class="pill">해온안태음</span> 본원의 노하우가 담긴 대표 유산방지약!</li>
+                        <li><span class="pill">태산반석산 & 수태환</span> 예로부터 왕실에서도 쓰이던 명방들이에요.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 14, title: "외래 치료 (침/부항) 🪡", subtitle: "주 1~2회 힐링하는 자궁 순환 테라피",
+                content: `
+                    <div class="intro-box">
+                        <p>한약과 함께 병원에서 직접 받는 외래 치료는 효과를 200% 끌어올려 주는 마법의 시간이에요! ⏰</p>
+                    </div>
+                    <h4>🏥 외래 치료, 어떻게 진행되나요?</h4>
+                    <ul>
+                        <li><strong>내원 주기:</strong> 일주일에 1~2번 정도 편한 시간에 들러주세요.</li>
+                        <li><strong>풀코스 힐링:</strong> [침술 + 심부온열기 + 따뜻한 뜸 + 뭉친 등/허리 부항]을 모두 받으실 수 있어요.</li>
+                    </ul>
+
+                    <h4>🎯 어디에 침을 맞나요? (주요 혈자리)</h4>
+                    <ul>
+                        <li><strong>사암침:</strong> 손발 끝의 혈자리를 이용해 오장육부(특히 간과 신장)의 밸런스를 맞추는 고급 침술이에요.</li>
+                        <li><strong>복부/다리:</strong> 자궁과 난소가 위치한 아랫배(중극, 귀래, 자궁혈)와 혈액순환을 돕는 다리(삼음교)에 부드럽게 침을 놔드려요.</li>
+                    </ul>
+
+                    <h4>⚡ 특수 전침 치료</h4>
+                    <p>침에 미세한 전류를 흘려보내 신경과 근육을 자극해요!</p>
+                    <ul>
+                        <li>배란 유도가 필요할 때, 골반 혈류량을 훅 늘려야 할 때, 혹은 난자 채취 후 통증이 심할 때 아주 효과적이랍니다.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 15, title: "이학치료 (뜸/약침/고주파) ♨️", subtitle: "냉증은 가라! 따뜻한 혈류가 퐁퐁퐁",
+                content: `
+                    <div class="intro-box">
+                        <p>아랫배가 항상 차가우셨나요? 해온의 특화된 온열 요법으로 자궁 깊은 곳까지 훈훈하게 데워드릴게요! 🔥</p>
+                    </div>
+                    <h4>💉 약침 요법 (한약의 진액을 직접!)</h4>
+                    <p>정제된 한약 추출물을 혈자리에 직접 주입해, 먹는 약과 침의 효과를 동시에 내는 치료예요.</p>
+                    <ul>
+                        <li><strong>자하거(태반) 약침:</strong> 임신 준비의 꽃! 약해진 기운을 크게 보충해 줍니다.</li>
+                        <li><strong>팔미지황탕 약침:</strong> 아랫배에 쑥~ 스며들어 차가운 기운을 몰아냅니다.</li>
+                    </ul>
+
+                    <h4>🔥 정성스러운 뜸 치료 (10~15분)</h4>
+                    <p>배꼽 아래(기해, 관원) 단전에 따뜻한 뜸을 올려두어 뱃속 깊숙이 온기를 불어넣고 면역력을 높여요.</p>
+
+                    <h4>📻 심부온열 및 고주파 치료</h4>
+                    <p>피부 겉만 뜨거워지는 핫팩과 달리, 고주파 파동이 골반강 내부 깊은 근육층과 자궁/난소까지 침투해 열을 발생시킵니다.</p>
+                    <ul>
+                        <li>배란 기능을 향상시키고(복부 전면 적용)</li>
+                        <li>딱딱하게 굳은 골반 혈류를 시원하게 뚫어줍니다(허리 엉치뼈 부위 적용).</li>
+                    </ul>
+                `
+            }
+        ];
+
+        // --- 2. 화면 렌더링 및 네비게이션 로직 ---
+
+        const viewHome = document.getElementById('view-home');
+        const viewCategory = document.getElementById('view-category');
+
+        // 홈 화면 카테고리 리스트 렌더링
+        function renderHome() {
+            const listContainer = document.getElementById('category-list');
+            let html = '';
+
+            categories.forEach((cat, index) => {
+                html += `
+                    <button onclick="openCategory('${cat.id}')" class="bg-white p-5 rounded-2xl shadow-sm border border-brand-100 flex items-center justify-between hover:shadow-md hover:border-brand-300 transition-all active:scale-[0.98] transform relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-brand-400 group-hover:bg-brand-500 transition-colors"></div>
+                        <div class="text-left pl-3 flex-1">
+                            <span class="text-[0.7rem] font-bold text-brand-600 mb-1 block tracking-widest">STEP 0${index + 1}</span>
+                            <h3 class="text-lg font-extrabold text-gray-900 leading-snug flex items-center gap-2">
+                                <span class="text-xl">${cat.emoji}</span> ${cat.title}
+                            </h3>
+                            <p class="text-[0.9rem] text-gray-500 mt-1.5 line-clamp-2 leading-relaxed break-keep">${cat.desc}</p>
+                        </div>
+                        <div class="text-gray-300 ml-2 group-hover:text-brand-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    </button>
+                `;
+            });
+
+            listContainer.innerHTML = html;
+        }
+
+        // 특정 카테고리 세부 페이지 열기
+        function openCategory(catId) {
+            const cat = categories.find(c => c.id === catId);
+            if (!cat) return;
+
+            // 서브페이지 헤더 업데이트
+            document.getElementById('sub-category-title').innerHTML = `<span class="mr-1">${cat.emoji}</span>${cat.title}`;
+            document.getElementById('sub-category-desc').innerText = cat.desc;
+
+            // 서브페이지 챕터 리스트 렌더링
+            const listContainer = document.getElementById('chapter-list');
+            let html = '';
+
+            cat.chapterIds.forEach(chapId => {
+                const chapter = chapters.find(c => c.id === chapId);
+                if (chapter) {
+                    html += `
+                        <button onclick="openModal(${chapter.id})" class="bg-white p-4 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 flex items-center justify-between hover:shadow-md hover:border-brand-200 transition-all active:scale-[0.98] transform">
+                            <div class="text-left w-[88%] pr-2">
+                                <h3 class="text-[1.05rem] font-extrabold text-gray-800 truncate mb-0.5">${chapter.title}</h3>
+                                <p class="text-[0.85rem] text-gray-500 truncate">${chapter.subtitle}</p>
+                            </div>
+                            <div class="text-brand-400 bg-brand-50 p-1.5 rounded-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </button>
+                    `;
+                }
+            });
+            listContainer.innerHTML = html;
+
+            // 화면 전환 (홈 숨기기, 카테고리 보이기)
+            viewHome.classList.add('hidden');
+            viewCategory.classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        // 카테고리 닫고 홈으로 돌아가기
+        function closeCategory() {
+            viewCategory.classList.add('hidden');
+            viewHome.classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        // --- 3. 개별 챕터 모달(팝업) 로직 ---
+
+        function openModal(id) {
+            const chapter = chapters.find(c => c.id === id);
+            if (!chapter) return;
+
+            // 데이터 채우기
+            document.getElementById('modal-chapter-num').innerText = `내용 상세 보기 ✨`;
+            document.getElementById('modal-title').innerText = chapter.title.replace(/[^\w\s가-힣]/g, '').trim(); // 이모티콘 제거하고 제목만 표시
+            document.getElementById('modal-body').innerHTML = chapter.content;
+
+            // 모달 열기
+            document.getElementById('modal-backdrop').classList.add('active');
+            document.getElementById('modal-content').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            // 모달 닫기
+            document.getElementById('modal-backdrop').classList.remove('active');
+            document.getElementById('modal-content').classList.remove('active');
+            document.body.style.overflow = '';
+            
+            setTimeout(() => {
+                document.getElementById('modal-body').scrollTop = 0;
+            }, 400); // 닫히는 애니메이션 끝난 후 스크롤 리셋
+        }
+
+        // 초기화
+        window.onload = () => {
+            renderHome();
+        };
+    </script>
+</body>
+</html>
